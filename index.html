@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield - AI Cybersecurity Awareness</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #172554;
+        }
+
+        header {
+            background: #0f172a;
+            color: white;
+            padding: 25px 15px;
+            text-align: center;
+        }
+
+        nav {
+            background: #1e293b;
+            padding: 14px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 12px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 30px 15px;
+            background: #dbeafe;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 25px 15px;
+        }
+
+        .card, .checker {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #cbd5e1;
+        }
+
+        .card {
+            width: 300px;
+        }
+
+        .checker {
+            width: min(600px, 100%);
+            margin: 10px auto 30px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #94a3b8;
+            border-radius: 6px;
+            font: inherit;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #result {
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        footer {
+            background: #0f172a;
+            color: white;
+            text-align: center;
+            padding: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>🛡️ CyberShield</h1>
+        <p>AI Cybersecurity Awareness Platform</p>
+    </header>
+
+    <nav>
+        <a href="#phishing">Phishing</a>
+        <a href="#arrest">Digital Arrest</a>
+        <a href="#fake-news">Fake News</a>
+        <a href="#checker">Message Checker</a>
+    </nav>
+
+    <section class="hero">
+        <h2>Stay Alert. Stay Safe.</h2>
+        <p>Learn to recognize online scams and misinformation.</p>
+    </section>
+
+    <main>
+        <section class="container">
+            <article class="card" id="phishing">
+                <h2>🎣 Phishing Scams</h2>
+                <p>Scammers use fake emails, messages, or websites
+                to steal personal information.</p>
+                <h3>Safety tips</h3>
+                <p>Check website addresses. Never share your
+                password or OTP with anyone.</p>
+            </article>
+
+            <article class="card" id="arrest">
+                <h2>📱 Digital Arrest Scams</h2>
+                <p>Fraudsters impersonate police or government
+                officials and threaten people through calls.</p>
+                <h3>Safety tips</h3>
+                <p>Do not panic or transfer money because of a
+                threatening call. Verify independently.</p>
+            </article>
+
+            <article class="card" id="fake-news">
+                <h2>🤖 AI Fake News</h2>
+                <p>AI-generated text, images, audio, and videos
+                can be used to spread misinformation.</p>
+                <h3>Safety tips</h3>
+                <p>Check the original source, publication date,
+                and trusted news organizations.</p>
+            </article>
+        </section>
+
+        <section class="checker" id="checker">
+            <h2>🔎 Suspicious Message Checker</h2>
+            <p>Paste a message to check for basic warning signs.
+            Do not include real passwords, OTPs, or private data.</p>
+
+            <form id="checkForm">
+                <textarea id="message"
+                    placeholder="Paste a suspicious message here..."
+                    required></textarea>
+                <button type="submit">Check Message</button>
+            </form>
+
+            <p id="result" aria-live="polite"></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>CyberShield | Think Before You Click</p>
+        <p>Educational demo — not a definitive scam detector.</p>
+    </footer>
+
+    <script>
+        const form = document.getElementById("checkForm");
+        const result = document.getElementById("result");
+
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            result.textContent = "Checking message...";
+
+            try {
+                const response = await fetch("/check", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: document.getElementById("message").value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.result || "Request failed");
+                }
+
+                result.textContent = data.result;
+
+                if (data.warnings && data.warnings.length > 0) {
+                    result.textContent +=
+                        " Warning signs: " + data.warnings.join(", ");
+                }
+            } catch (error) {
+                result.textContent =
+                    "Could not connect to the backend. Check that Flask is running.";
+            }
+        });
+    </script>
+</body>
+</html>
